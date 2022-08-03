@@ -1,7 +1,12 @@
-import socket, time
-from threading import *
+import socket
+from time import asctime
+from threading import Thread
 
 def ser(msg,port,has):
+    """
+    send message 
+    (message,port,first_message #True or False)
+    """
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     ip = 'localhost'
@@ -16,21 +21,35 @@ def ser(msg,port,has):
     return 0
 
 def cli(ip,port):
+    """
+    Recive and decode message
+    (ip_another_computer,port_another_computer)
+    """
     odbiorca = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     odbiorca.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     odbiorca.connect((ip,port))
     msg = odbiorca.recv(1024)
     msg = msg.decode()
     user, msg2 = decode2(msg)
-    print('['+str(time.asctime())+'] '+str(user)+': '+str(msg2))
+    print('['+str(asctime())+'] '+str(user)+': '+str(msg2))
     odbiorca.close()
     return 0
 
 def connect(user,msg):
+    """
+    prepare message to send
+    (user_name,message)
+    return merged message, ready to send
+    """
     com = user + ';' + msg
     return com
 
 def decode2(msg):
+    """
+    decode received message
+    (message)
+    return decoded message (user,message)
+    """
     user, text = msg.split(';',maxsplit=1)
     return user,text
 
@@ -43,7 +62,6 @@ if(__name__ == "__main__"):
     has = False
     if(why == 't'):
         has = True
-    
     
     while True:
         if(has != True):
